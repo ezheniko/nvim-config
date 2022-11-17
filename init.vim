@@ -9,6 +9,7 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'L3MON4D3/LuaSnip'
     Plug 'nvim-lua/plenary.nvim'
     Plug 'nvim-telescope/telescope.nvim'
+    Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
     Plug 'tami5/lspsaga.nvim'
     Plug 'nvim-lualine/lualine.nvim'
@@ -20,6 +21,8 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
     Plug 'sainnhe/everforest'
     Plug 'morhetz/gruvbox'
+    Plug 'ghifarit53/daycula-vim', { 'branch': 'main' }
+    Plug 'hachy/eva01.vim'
 call plug#end()
 
 syntax on
@@ -40,12 +43,17 @@ set nowrap
 set signcolumn=yes
 "set colorcolumn=70
 
+set laststatus=3 "global statusline
+set winbar=%=%m\ %f
+
 set termguicolors
 "colorscheme nord
 "colorscheme hybrid
 "colorscheme tokyonight
 "colorscheme everforest
 colorscheme gruvbox
+"colorscheme daycula
+"colorscheme eva01
 
 let mapleader = ' '
 
@@ -240,8 +248,25 @@ require('lualine').setup {
 }
 EOF
 
+lua << EOF
+require('telescope').setup {
+  extensions = {
+    fzf = {
+      fuzzy = true,                    -- false will only do exact matching
+      override_generic_sorter = true,  -- override the generic sorter
+      override_file_sorter = true,     -- override the file sorter
+      case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
+                                       -- the default case_mode is "smart_case"
+    }
+  }
+}
+
+require('telescope').load_extension('fzf')
+EOF
+
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fw :execute 'Telescope live_grep default_text=' . expand('<cword>')<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
